@@ -7,6 +7,11 @@ const { genToken, decodeToken } = require("../utilities/jwt");
 const newUser = async (req, res) => {
   try {
     const { firstName, lastName, email, password, confirmPassword } = req.body;
+        // Check if the password contains special characters
+  const specialCharacters = /[!@#$%^&*(),.?":{}|<>]/;
+  if (!specialCharacters.test(password)) {
+    return res.status(400).json({ error: 'Password must contain special characters.' });
+  }
     const isEmail = await User.findOne({ email });
     if (password === confirmPassword) {
       if (isEmail) {
@@ -44,6 +49,7 @@ const newUser = async (req, res) => {
         message: "Your password and Confirm password must match",
       });
     }
+  
   } catch (error) {
     res.status(500).json({
       message: error.message,
